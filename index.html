@@ -41,10 +41,18 @@
   }
   header .title-row {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
+  }
+  @keyframes floatTitle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes floatIcon {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-6px) rotate(4deg); }
   }
   header h1 {
     margin: 0;
@@ -53,6 +61,16 @@
     font-weight: 700;
     letter-spacing: 0.5px;
     text-shadow: none;
+    animation: floatTitle 3s ease-in-out infinite;
+  }
+  .lib-icon {
+    width: 46px;
+    height: 46px;
+    animation: floatIcon 3.2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @media (max-width: 480px) {
+    .lib-icon { width: 34px; height: 34px; }
   }
   header h1 .accent {
     color: #234f3b;
@@ -207,6 +225,11 @@
 
 <header>
   <div class="title-row">
+    <svg class="lib-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="8" y="36" width="48" height="9" rx="2" fill="#603F83"/>
+      <rect x="10" y="25" width="44" height="9" rx="2" fill="#2e6b4f" transform="rotate(-4 32 29)"/>
+      <rect x="12" y="14" width="40" height="9" rx="2" fill="#d98c3f" transform="rotate(3 32 18)"/>
+    </svg>
     <h1><span style="color:#603F83;">모란글샘</span> <span class="accent"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"></path><path d="M18.36 6.64a9 9 0 1 1-12.72 0"></path></svg>N</span></h1>
   </div>
   <p>내 손안의 도서관, 모란글샘 ON</p>
