@@ -1,0 +1,263 @@
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>도서관 소식 | 모란글샘 ON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #2e6b4f;
+    --brand-dark: #234f3b;
+    --brand-light: #e9f3ee;
+    --accent: #d98c3f;
+    --text: #23302a;
+    --muted: #6b7a72;
+    --bg: #f6f8f6;
+    --white: #ffffff;
+    --border: #dce5df;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    font-family: "Noto Sans KR", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    position: relative;
+    background: #ACC7B4;
+    color: var(--white);
+    padding: 40px 24px 36px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  }
+  header h1 {
+    margin: 0;
+    font-family: 'Jua', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #331B3F;
+    text-shadow: none;
+  }
+  .back-link {
+    position: absolute;
+    bottom: 16px;
+    right: 20px;
+    z-index: 10;
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #331B3F;
+    background: rgba(255,255,255,0.9);
+    text-decoration: none;
+    border: 1px solid #331B3F;
+    padding: 6px 14px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+  .back-link:hover {
+    background: #ffffff;
+  }
+
+  main {
+    flex: 1;
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 20px;
+  }
+
+  main h2 {
+    font-size: 1.15rem;
+    color: var(--brand-dark);
+    margin: 0 0 18px;
+  }
+
+  .guide-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    border-radius: 20px;
+    padding: 8px 16px;
+  }
+  .guide-link:hover {
+    background: var(--accent);
+    color: var(--white);
+  }
+  .section-divider {
+    border: none;
+    border-top: 1px dashed var(--border);
+    margin: 0 0 20px;
+  }
+  .notion-embed-wrap {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0 0 20px;
+  }
+  .notion-embed-wrap iframe {
+    display: block;
+    width: 100%;
+    height: 600px;
+    border: none;
+  }
+
+  .news-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+  }
+  .news-item .date {
+    font-size: 0.75rem;
+    color: #1a1a1a;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .news-item .title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #E5383B;
+    margin: 0 0 6px;
+  }
+  .news-item .content {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  .news-item .content a {
+    color: var(--brand-dark);
+    font-weight: 700;
+    text-decoration: underline;
+    word-break: break-all;
+  }
+
+  .empty-msg {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px 16px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    background: var(--white);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 480px) {
+    .back-link { bottom: 12px; right: 12px; font-size: 0.78rem; padding: 5px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>모란글샘 소식</h1>
+  <a class="back-link" href="index.html">← 홈으로</a>
+</header>
+
+<main>
+  <h2>전체 소식</h2>
+  <a class="guide-link" href="https://absorbed-brake-c3a.notion.site/1b31cb6ffd1f8048bb29c0e3e443f251" target="_blank" rel="noopener">📋 도서관 이용안내</a>
+  <hr class="section-divider">
+  <div id="news-container"><div class="empty-msg">소식을 불러오는 중입니다...</div></div>
+</main>
+
+<footer>
+  모란글샘 ON · 학교도서관 통합 서비스 포털
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+  // 관리자 안내: 아래 CSV_URL을 index.html과 동일하게, 구글 시트 "웹에 게시" CSV 링크로 교체하세요.
+  // 시트 첫 행(헤더)은 "날짜,제목,내용" 순서여야 합니다.
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdZYnbTN8Rg_d2Lgc57YeGNu3GcXn_YOb8N0e1X4OFzzeaAoUs4B7Uz8G2CZoRMZsmGpdbK5X79R-J/pub?output=csv";
+
+  const container = document.getElementById('news-container');
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function linkify(text) {
+    const escaped = escapeHtml(text);
+    return escaped.replace(/(https?:\/\/[^\s<]+|www\.[^\s<]+)/g, function(match) {
+      let trailing = '';
+      const trailMatch = match.match(/[).,!?;:'"]+$/);
+      if (trailMatch) {
+        trailing = trailMatch[0];
+        match = match.slice(0, -trailing.length);
+      }
+      const href = match.startsWith('www.') ? 'https://' + match : match;
+      return '<a href="' + href + '" target="_blank" rel="noopener">' + match + '</a>' + trailing;
+    });
+  }
+
+  function renderAllNews(rows) {
+    if (!rows || rows.length === 0) {
+      container.innerHTML = '<div class="empty-msg">등록된 소식이 없습니다.</div>';
+      return;
+    }
+    container.innerHTML = '';
+    rows.forEach(row => {
+      const date = row['날짜'] || row['date'] || '';
+      const title = row['제목'] || row['title'] || '';
+      const content = row['내용'] || row['content'] || '';
+      if (!title) return;
+      const item = document.createElement('div');
+      item.className = 'news-item';
+      item.innerHTML =
+        (date ? '<div class="date">' + date + '</div>' : '') +
+        '<p class="title">' + title + '</p>' +
+        (content ? '<p class="content">' + linkify(content) + '</p>' : '');
+      container.appendChild(item);
+    });
+  }
+
+  if (CSV_URL) {
+    Papa.parse(CSV_URL, {
+      download: true,
+      header: true,
+      transformHeader: function(h) { return h.trim(); },
+      complete: function(results) {
+        renderAllNews(results.data.filter(r => (r['제목'] || r['title'])));
+      },
+      error: function() {
+        container.innerHTML = '<div class="empty-msg">소식을 불러오지 못했습니다.<br>구글 시트 연결 주소를 확인해주세요.</div>';
+      }
+    });
+  } else {
+    container.innerHTML = '<div class="empty-msg">아직 구글 시트가 연결되지 않았습니다.<br>관리자에게 문의해주세요.</div>';
+  }
+</script>
+
+
+
+</body></html>
