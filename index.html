@@ -1,0 +1,304 @@
+<html lang="ko"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>모란글샘 ON | 내 손안의 도서관</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand: #2e6b4f;
+    --brand-dark: #234f3b;
+    --brand-light: #e9f3ee;
+    --accent: #d98c3f;
+    --text: #23302a;
+    --muted: #6b7a72;
+    --bg: #f6f8f6;
+    --white: #ffffff;
+    --border: #dce5df;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #DCE2F0;
+    color: var(--white);
+    padding: 64px 24px 56px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  }
+  header .title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  header h1 {
+    margin: 0;
+    font-family: 'Jua', sans-serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+  }
+  header h1 .accent {
+    color: #ACC7B4;
+    font-size: 1.3em;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  header h1 .accent svg {
+    width: 0.85em;
+    height: 0.85em;
+    stroke: currentColor;
+  }
+  header p {
+    margin: 10px 0 0;
+    font-family: 'Jua', sans-serif;
+    font-size: 1.15rem;
+    color: var(--muted);
+    font-weight: 400;
+    text-shadow: none;
+  }
+
+  main {
+    flex: 1;
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 36px 20px 20px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px 24px;
+  }
+  @media (max-width: 780px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(46,107,79,0.15);
+    border-color: var(--brand);
+  }
+  .card .icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--brand-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    margin-bottom: 4px;
+  }
+  .card h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--brand-dark);
+  }
+  .card p {
+    margin: 0;
+    font-family: 'Noto Sans KR', "Pretendard", sans-serif;
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .card .go {
+    margin-top: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .static-card p {
+    width: 100%;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .static-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(46,107,79,0.15);
+    border-color: var(--brand);
+  }
+  .news-list {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    width: 100%;
+    text-align: left;
+  }
+  .news-list li {
+    font-family: 'Noto Sans KR', "Pretendard", sans-serif;
+    font-size: 0.8rem;
+    color: #E5383B;
+    padding: 6px 0;
+    border-top: 1px dashed var(--border);
+    position: relative;
+    padding-left: 14px;
+  }
+  .news-list li:first-child {
+    border-top: none;
+  }
+  .news-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .news-list .news-date {
+    color: #E5383B;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  footer {
+    text-align: center;
+    padding: 20px 16px;
+    font-family: 'Noto Sans KR', "Pretendard", sans-serif;
+    font-size: 0.78rem;
+    color: var(--muted);
+    background: var(--white);
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 480px) {
+    header { padding: 42px 20px 36px; }
+    header h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <h1><span style="color:#603F83;">모란글샘</span> <span class="accent"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"></path><path d="M18.36 6.64a9 9 0 1 1-12.72 0"></path></svg>N</span></h1>
+  </div>
+  <p>내 손안의 도서관, 모란글샘 ON</p>
+</header>
+
+<main>
+  <div class="grid">
+
+    <a class="card" href="https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=%EB%B6%80%EA%B0%9C%EC%97%AC%EC%9E%90%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90%20%EB%8F%84%EC%84%9C%EA%B4%80&provCode=E10&neisCode=E100000214" target="_blank" rel="noopener">
+      <div class="icon-circle">🔍</div>
+      <h2>도서 검색</h2>
+      <p>학교도서관 자료 통합 검색</p>
+      <span class="go">바로가기 ↗</span>
+    </a>
+
+    <a class="card" href="https://bugaegirl.dkyobobook.co.kr/main.ink" target="_blank" rel="noopener">
+      <div class="icon-circle">📱</div>
+      <h2>전자책도서관</h2>
+      <p>전자책 대출·열람</p>
+      <span class="go">바로가기 ↗</span>
+    </a>
+
+    <a class="card" href="https://library-book-request-ten.vercel.app/" target="_blank" rel="noopener">
+      <div class="icon-circle">🛒</div>
+      <h2>구입희망도서 신청</h2>
+      <p>읽고 싶은 책 신청</p>
+      <span class="go">바로가기 ↗</span>
+    </a>
+
+    <a class="card" href="https://steal1224-sys.github.io/library-class-booking/" target="_blank" rel="noopener">
+      <div class="icon-circle">🏫</div>
+      <h2>교사용) 도서관 이용 신청</h2>
+      <p>도서관 활용 수업 신청</p>
+      <span class="go">바로가기 ↗</span>
+    </a>
+
+    <a class="card" href="https://book-review-2026.vercel.app/" target="_blank" rel="noopener">
+      <div class="icon-circle">✍️</div>
+      <h2>서평단 Book Review</h2>
+      <p>서평단 추천도서</p>
+      <span class="go">바로가기 ↗</span>
+    </a>
+
+    <a class="card static-card" href="news.html">
+      <div class="icon-circle">📢</div>
+      <h2>도서관 소식</h2>
+      <p>공지사항과 새소식 확인</p>
+      <ul class="news-list" id="news-list"><li><span class="news-date">9.1.(화)~ 9.6.(일)</span>3차 구입 희망도서 신청</li><li><span class="news-date">8.24.(월) ~</span>2학기 진로독서 모집</li></ul>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  모란글샘 ON · 학교도서관 통합 서비스 포털
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+  // 관리자 안내: 아래 CSV_URL을 구글 시트 "웹에 게시"로 얻은 CSV 링크로 교체하세요.
+  // 시트 첫 행(헤더)은 "날짜,제목,내용" 순서여야 합니다. 최신 소식을 맨 위 행에 추가해주세요.
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSdZYnbTN8Rg_d2Lgc57YeGNu3GcXn_YOb8N0e1X4OFzzeaAoUs4B7Uz8G2CZoRMZsmGpdbK5X79R-J/pub?output=csv";
+
+  function renderHomeNews(rows) {
+    const list = document.getElementById('news-list');
+    if (!rows || rows.length === 0) return;
+    list.innerHTML = '';
+    rows.slice(0, 3).forEach(row => {
+      const li = document.createElement('li');
+      const date = row['날짜'] || row['date'] || '';
+      const title = row['제목'] || row['title'] || '';
+      li.innerHTML = date
+        ? '<span class="news-date">' + date + '</span>' + title
+        : title;
+      list.appendChild(li);
+    });
+  }
+
+  if (CSV_URL) {
+    Papa.parse(CSV_URL, {
+      download: true,
+      header: true,
+      transformHeader: function(h) { return h.trim(); },
+      complete: function(results) {
+        renderHomeNews(results.data.filter(r => (r['제목'] || r['title'])));
+      },
+      error: function() {
+        // CSV를 불러오지 못하면 기존 예시 문구를 그대로 둡니다.
+      }
+    });
+  }
+</script>
+
+
+
+</body></html>
