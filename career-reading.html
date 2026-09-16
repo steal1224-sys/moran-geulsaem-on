@@ -150,20 +150,35 @@
 
 <script>
   // 관리자 안내: 새 기수의 추천도서 목록 이미지를 추가하려면
-  // 1) images 폴더에 이미지 파일을 올리고
-  // 2) 아래 IMAGES 배열 맨 위에 { src: "파일명", label: "표시할 제목" } 한 줄만 추가하면 됩니다.
-  const IMAGES = [
+  // GitHub 저장소(moran-geulsaem-on)의 images 폴더에 이미지 파일만 올리면 됩니다.
+  // (Add file > Upload files > images 폴더 선택 후 사진을 끌어다 놓고 Commit)
+  // 파일명은 자유롭게 정하셔도 되고(예: 5th.jpg, 2027.jpg), 별도로 코드를 건드릴 필요가 없습니다.
+  // 화면에는 images 폴더 안의 이미지가 파일명 역순(최근 올린 것으로 추정되는 순)으로 자동 표시됩니다.
+
+  const REPO_API = "https://api.github.com/repos/steal1224-sys/moran-geulsaem-on/contents/images";
+  const IMAGE_EXT = /\.(jpg|jpeg|png|webp|gif)$/i;
+
+  // 폴더 목록을 못 불러올 경우를 대비한 기본 목록(폴백)
+  const FALLBACK_IMAGES = [
     { src: "images/4th.jpg", label: "2026 책과함께직진(4기) 진로 독서 모임" },
     { src: "images/3rd.png", label: "2026 책과함께직진(3기) 진로 독서 모임" },
     { src: "images/2nd.jpg", label: "2025 책과함께직진(2기) 활동도서" },
     { src: "images/1st.jpg", label: "2025 책과함께직진 진로 독서 모임" }
   ];
 
-  const gallery = document.getElementById('gallery');
-  if (IMAGES.length === 0) {
-    gallery.innerHTML = '<div class="empty-msg">등록된 추천도서 목록이 없습니다.</div>';
-  } else {
-    IMAGES.forEach(item => {
+  function prettifyLabel(filename) {
+    const base = filename.replace(IMAGE_EXT, '');
+    return "책과함께직진 진로 독서 모임 — " + base;
+  }
+
+  function renderGallery(items) {
+    const gallery = document.getElementById('gallery');
+    if (!items || items.length === 0) {
+      gallery.innerHTML = '<div class="empty-msg">등록된 추천도서 목록이 없습니다.</div>';
+      return;
+    }
+    gallery.innerHTML = '';
+    items.forEach(item => {
       const wrap = document.createElement('div');
       wrap.className = 'gallery-item';
       wrap.innerHTML =
@@ -172,6 +187,22 @@
       gallery.appendChild(wrap);
     });
   }
+
+  fetch(REPO_API)
+    .then(res => {
+      if (!res.ok) throw new Error('folder listing failed');
+      return res.json();
+    })
+    .then(files => {
+      const images = files
+        .filter(f => f.type === 'file' && IMAGE_EXT.test(f.name))
+        .sort((a, b) => b.name.localeCompare(a.name, 'en', { numeric: true }))
+        .map(f => ({ src: 'images/' + f.name, label: prettifyLabel(f.name) }));
+      renderGallery(images.length ? images : FALLBACK_IMAGES);
+    })
+    .catch(() => {
+      renderGallery(FALLBACK_IMAGES);
+    });
 </script>
 
 </body></html>
