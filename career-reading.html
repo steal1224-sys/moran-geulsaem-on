@@ -82,6 +82,33 @@
     padding: 32px 20px 48px;
   }
 
+  /* 탭 */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    appearance: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--muted);
+    padding: 10px 6px 12px;
+    margin-bottom: -1px;
+    border-bottom: 3px solid transparent;
+  }
+  .tab-btn.active {
+    color: var(--brand-dark);
+    border-bottom-color: var(--accent);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
   .gallery {
     display: flex;
     flex-direction: column;
@@ -98,15 +125,71 @@
     font-size: 1rem;
     font-weight: 700;
     color: var(--brand-dark);
-    margin: 0 0 14px;
+    margin: 0 0 12px;
     padding-left: 4px;
     border-left: 4px solid var(--accent);
+  }
+  .gallery-item .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 14px;
+  }
+  .gallery-item .meta .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--brand);
+    background: var(--brand-light);
+    border: 1px solid var(--brand);
+    border-radius: 20px;
+    padding: 4px 12px;
   }
   .gallery-item img {
     display: block;
     width: 100%;
     height: auto;
     border-radius: 10px;
+  }
+
+  /* 공지사항 */
+  .notice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .notice-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .notice-item .date {
+    font-size: 0.75rem;
+    color: #1a1a1a;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .notice-item .title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #E5383B;
+    margin: 0 0 6px;
+  }
+  .notice-item .content {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+  .notice-item .content a {
+    color: var(--brand-dark);
+    font-weight: 700;
+    text-decoration: underline;
+    word-break: break-all;
   }
 
   .empty-msg {
@@ -141,19 +224,46 @@
 </header>
 
 <main>
-  <div class="gallery" id="gallery"></div>
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-btn-gallery" type="button">📚 모임 사진</button>
+    <button class="tab-btn" id="tab-btn-notice" type="button">📢 공지사항</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-panel-gallery">
+    <div class="gallery" id="gallery"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-panel-notice">
+    <div class="notice-list" id="notice-container"><div class="empty-msg">공지사항을 불러오는 중입니다...</div></div>
+  </div>
 </main>
 
 <footer>
   모란글샘 ON · 학교도서관 통합 서비스 포털
 </footer>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
-  // 관리자 안내: 새 기수의 추천도서 목록 이미지를 추가하려면
-  // GitHub 저장소(moran-geulsaem-on)의 images 폴더에 이미지 파일만 올리면 됩니다.
-  // (Add file > Upload files > images 폴더 선택 후 사진을 끌어다 놓고 Commit)
-  // 파일명은 자유롭게 정하셔도 되고(예: 5th.jpg, 2027.jpg), 별도로 코드를 건드릴 필요가 없습니다.
-  // 화면에는 images 폴더 안의 이미지가 파일명 역순(최근 올린 것으로 추정되는 순)으로 자동 표시됩니다.
+  // ===================================================================
+  // 관리자 안내 — 모임 사진 올리기
+  // ===================================================================
+  // 1) GitHub 저장소(moran-geulsaem-on)의 images 폴더에 사진 파일을 올립니다.
+  //    (Add file > Upload files > images 폴더 선택 후 사진을 끌어다 놓고 Commit)
+  //    파일명은 자유롭게 정하셔도 됩니다 (예: 5th.jpg, 2027.jpg).
+  // 2) 아래 META_CSV_URL에 연결된 구글 시트에 같은 파일명으로 한 줄을 추가하면
+  //    사진 아래에 진행시기 · 참여팀 · 참여학생 수가 함께 표시됩니다.
+  //    시트 첫 행(헤더)은 "파일명,진행시기,참여팀,참여학생수" 순서여야 하고,
+  //    "파일명"에는 1)에서 올린 파일 이름을 정확히 적어주세요 (예: 5th.jpg).
+  //    시트에 기록이 없는 사진은 제목만 표시되고 세부 정보는 생략됩니다.
+  const META_CSV_URL = ""; // 예: "https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
+
+  // ===================================================================
+  // 관리자 안내 — 공지사항 올리기
+  // ===================================================================
+  // 진로독서 모임 전용 공지사항을 올리려면, 구글 시트를 하나 만들고
+  // "파일 > 웹에 게시"로 얻은 CSV 링크를 아래 NOTICE_CSV_URL에 넣어주세요.
+  // 시트 첫 행(헤더)은 "날짜,제목,내용" 순서여야 하고, 최신 공지를 맨 위 행에 추가해주세요.
+  const NOTICE_CSV_URL = ""; // 예: "https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
 
   const REPO_API = "https://api.github.com/repos/steal1224-sys/moran-geulsaem-on/contents/images";
   const IMAGE_EXT = /\.(jpg|jpeg|png|webp|gif)$/i;
@@ -171,7 +281,16 @@
     return "책과함께직진 진로 독서 모임 — " + base;
   }
 
-  function renderGallery(items) {
+  function buildMetaChips(meta) {
+    if (!meta) return '';
+    const chips = [];
+    if (meta['진행시기']) chips.push('<span class="chip">🗓️ ' + meta['진행시기'] + '</span>');
+    if (meta['참여팀']) chips.push('<span class="chip">👥 ' + meta['참여팀'] + '</span>');
+    if (meta['참여학생수']) chips.push('<span class="chip">🙋 참여학생 ' + meta['참여학생수'] + '명</span>');
+    return chips.length ? '<div class="meta">' + chips.join('') + '</div>' : '';
+  }
+
+  function renderGallery(items, metaByFile) {
     const gallery = document.getElementById('gallery');
     if (!items || items.length === 0) {
       gallery.innerHTML = '<div class="empty-msg">등록된 추천도서 목록이 없습니다.</div>';
@@ -179,30 +298,138 @@
     }
     gallery.innerHTML = '';
     items.forEach(item => {
+      const filename = item.src.split('/').pop();
+      const meta = metaByFile ? metaByFile[filename] : null;
       const wrap = document.createElement('div');
       wrap.className = 'gallery-item';
       wrap.innerHTML =
         '<p class="label">' + item.label + '</p>' +
+        buildMetaChips(meta) +
         '<img src="' + item.src + '" alt="' + item.label + '" loading="lazy">';
       gallery.appendChild(wrap);
     });
   }
 
-  fetch(REPO_API)
-    .then(res => {
-      if (!res.ok) throw new Error('folder listing failed');
-      return res.json();
-    })
-    .then(files => {
-      const images = files
-        .filter(f => f.type === 'file' && IMAGE_EXT.test(f.name))
-        .sort((a, b) => b.name.localeCompare(a.name, 'en', { numeric: true }))
-        .map(f => ({ src: 'images/' + f.name, label: prettifyLabel(f.name) }));
-      renderGallery(images.length ? images : FALLBACK_IMAGES);
-    })
-    .catch(() => {
-      renderGallery(FALLBACK_IMAGES);
+  function loadGallery(metaByFile) {
+    fetch(REPO_API)
+      .then(res => {
+        if (!res.ok) throw new Error('folder listing failed');
+        return res.json();
+      })
+      .then(files => {
+        const images = files
+          .filter(f => f.type === 'file' && IMAGE_EXT.test(f.name))
+          .sort((a, b) => b.name.localeCompare(a.name, 'en', { numeric: true }))
+          .map(f => ({ src: 'images/' + f.name, label: prettifyLabel(f.name) }));
+        renderGallery(images.length ? images : FALLBACK_IMAGES, metaByFile);
+      })
+      .catch(() => {
+        renderGallery(FALLBACK_IMAGES, metaByFile);
+      });
+  }
+
+  if (META_CSV_URL) {
+    Papa.parse(META_CSV_URL, {
+      download: true,
+      header: true,
+      transformHeader: function(h) { return h.trim(); },
+      complete: function(results) {
+        const metaByFile = {};
+        (results.data || []).forEach(row => {
+          const filename = (row['파일명'] || row['filename'] || '').trim();
+          if (!filename) return;
+          metaByFile[filename] = {
+            '진행시기': (row['진행시기'] || row['period'] || '').trim(),
+            '참여팀': (row['참여팀'] || row['team'] || '').trim(),
+            '참여학생수': (row['참여학생수'] || row['students'] || '').trim()
+          };
+        });
+        loadGallery(metaByFile);
+      },
+      error: function() {
+        loadGallery(null);
+      }
     });
+  } else {
+    loadGallery(null);
+  }
+
+  // ---- 공지사항 탭 ----
+  const noticeContainer = document.getElementById('notice-container');
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function linkify(text) {
+    const escaped = escapeHtml(text);
+    return escaped.replace(/(https?:\/\/[^\s<]+|www\.[^\s<]+)/g, function(match) {
+      let trailing = '';
+      const trailMatch = match.match(/[).,!?;:'"]+$/);
+      if (trailMatch) {
+        trailing = trailMatch[0];
+        match = match.slice(0, -trailing.length);
+      }
+      const href = match.startsWith('www.') ? 'https://' + match : match;
+      return '<a href="' + href + '" target="_blank" rel="noopener">' + match + '</a>' + trailing;
+    });
+  }
+
+  function renderNotices(rows) {
+    if (!rows || rows.length === 0) {
+      noticeContainer.innerHTML = '<div class="empty-msg">등록된 공지사항이 없습니다.</div>';
+      return;
+    }
+    noticeContainer.innerHTML = '';
+    rows.forEach(row => {
+      const date = row['날짜'] || row['date'] || '';
+      const title = row['제목'] || row['title'] || '';
+      const content = row['내용'] || row['content'] || '';
+      if (!title) return;
+      const item = document.createElement('div');
+      item.className = 'notice-item';
+      item.innerHTML =
+        (date ? '<div class="date">' + date + '</div>' : '') +
+        '<p class="title">' + title + '</p>' +
+        (content ? '<p class="content">' + linkify(content) + '</p>' : '');
+      noticeContainer.appendChild(item);
+    });
+  }
+
+  if (NOTICE_CSV_URL) {
+    Papa.parse(NOTICE_CSV_URL, {
+      download: true,
+      header: true,
+      transformHeader: function(h) { return h.trim(); },
+      complete: function(results) {
+        renderNotices((results.data || []).filter(r => (r['제목'] || r['title'])));
+      },
+      error: function() {
+        noticeContainer.innerHTML = '<div class="empty-msg">공지사항을 불러오지 못했습니다.<br>구글 시트 연결 주소를 확인해주세요.</div>';
+      }
+    });
+  } else {
+    noticeContainer.innerHTML = '<div class="empty-msg">아직 공지사항이 등록되지 않았습니다.</div>';
+  }
+
+  // ---- 탭 전환 ----
+  const tabBtnGallery = document.getElementById('tab-btn-gallery');
+  const tabBtnNotice = document.getElementById('tab-btn-notice');
+  const tabPanelGallery = document.getElementById('tab-panel-gallery');
+  const tabPanelNotice = document.getElementById('tab-panel-notice');
+
+  function showTab(tab) {
+    const isGallery = tab === 'gallery';
+    tabBtnGallery.classList.toggle('active', isGallery);
+    tabBtnNotice.classList.toggle('active', !isGallery);
+    tabPanelGallery.classList.toggle('active', isGallery);
+    tabPanelNotice.classList.toggle('active', !isGallery);
+  }
+  tabBtnGallery.addEventListener('click', function() { showTab('gallery'); });
+  tabBtnNotice.addEventListener('click', function() { showTab('notice'); });
 </script>
 
 </body></html>
