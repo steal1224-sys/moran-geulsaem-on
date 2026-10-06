@@ -225,7 +225,7 @@
 
 <main>
   <div class="tabs">
-    <button class="tab-btn active" id="tab-btn-gallery" type="button">📚 모임 사진</button>
+    <button class="tab-btn active" id="tab-btn-gallery" type="button">📚 추천도서 사진</button>
     <button class="tab-btn" id="tab-btn-notice" type="button">📢 공지사항</button>
   </div>
 
@@ -245,17 +245,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
   // ===================================================================
-  // 관리자 안내 — 모임 사진 올리기
+  // 관리자 안내 — 추천도서 사진 올리기
   // ===================================================================
-  // 1) GitHub 저장소(moran-geulsaem-on)의 images 폴더에 사진 파일을 올립니다.
-  //    (Add file > Upload files > images 폴더 선택 후 사진을 끌어다 놓고 Commit)
-  //    파일명은 자유롭게 정하셔도 됩니다 (예: 5th.jpg, 2027.jpg).
-  // 2) 아래 META_CSV_URL에 연결된 구글 시트에 같은 파일명으로 한 줄을 추가하면
-  //    사진 아래에 진행시기 · 참여팀 · 참여학생 수가 함께 표시됩니다.
-  //    시트 첫 행(헤더)은 "파일명,진행시기,참여팀,참여학생수" 순서여야 하고,
-  //    "파일명"에는 1)에서 올린 파일 이름을 정확히 적어주세요 (예: 5th.jpg).
-  //    시트에 기록이 없는 사진은 제목만 표시되고 세부 정보는 생략됩니다.
-  const META_CSV_URL = ""; // 예: "https://docs.google.com/spreadsheets/d/e/.../pub?output=csv"
+  // GitHub 저장소(moran-geulsaem-on)의 images 폴더에 사진 파일을 올릴 때,
+  // 파일 이름을 아래 규칙대로 적으면 참여팀 · 참여학생 수가 사진 아래에
+  // 자동으로 함께 표시됩니다. (Add file > Upload files > images 폴더 선택
+  // 후 사진을 끌어다 놓고, 파일명만 아래처럼 바꿔서 Commit하면 끝!)
+  //
+  //   라벨__참여팀__참여학생수.확장자
+  //   예) 5th__3팀__32명.jpg
+  //       2027__문과반__28명.png
+  //
+  // - 라벨: 자유롭게 (회차, 연도 등)
+  // - 참여팀 / 참여학생수: 각각 원하는 대로 적으면 그대로 화면에 표시됩니다.
+  // - "__" 는 밑줄 두 개입니다. 참여팀·참여학생수를 적지 않고 싶으면
+  //   그냥 평소처럼 "5th.jpg" 처럼 파일명만 적어도 됩니다 (추가 정보 없이 표시).
+  const FILENAME_SEP = "__";
 
   // ===================================================================
   // 관리자 안내 — 공지사항 올리기
@@ -270,27 +275,32 @@
 
   // 폴더 목록을 못 불러올 경우를 대비한 기본 목록(폴백)
   const FALLBACK_IMAGES = [
-    { src: "images/4th.jpg", label: "2026 책과함께직진(4기) 진로 독서 모임" },
-    { src: "images/3rd.png", label: "2026 책과함께직진(3기) 진로 독서 모임" },
-    { src: "images/2nd.jpg", label: "2025 책과함께직진(2기) 활동도서" },
-    { src: "images/1st.jpg", label: "2025 책과함께직진 진로 독서 모임" }
+    { src: "images/4th.jpg", label: "2026 책과함께직진(4기) 추천도서" },
+    { src: "images/3rd.png", label: "2026 책과함께직진(3기) 추천도서" },
+    { src: "images/2nd.jpg", label: "2025 책과함께직진(2기) 추천도서" },
+    { src: "images/1st.jpg", label: "2025 책과함께직진 추천도서" }
   ];
 
-  function prettifyLabel(filename) {
+  // 파일명을 "라벨__참여팀__참여학생수" 형태로 파싱합니다.
+  function parseFilenameMeta(filename) {
     const base = filename.replace(IMAGE_EXT, '');
-    return "책과함께직진 진로 독서 모임 — " + base;
+    const parts = base.split(FILENAME_SEP);
+    const label = "책과함께직진 추천도서 — " + parts[0];
+    const meta = {};
+    if (parts[1]) meta['참여팀'] = parts[1].trim();
+    if (parts[2]) meta['참여학생수'] = parts[2].trim();
+    return { label: label, meta: meta };
   }
 
   function buildMetaChips(meta) {
     if (!meta) return '';
     const chips = [];
-    if (meta['진행시기']) chips.push('<span class="chip">🗓️ ' + meta['진행시기'] + '</span>');
     if (meta['참여팀']) chips.push('<span class="chip">👥 ' + meta['참여팀'] + '</span>');
-    if (meta['참여학생수']) chips.push('<span class="chip">🙋 참여학생 ' + meta['참여학생수'] + '명</span>');
+    if (meta['참여학생수']) chips.push('<span class="chip">🙋 참여학생 ' + meta['참여학생수'] + '</span>');
     return chips.length ? '<div class="meta">' + chips.join('') + '</div>' : '';
   }
 
-  function renderGallery(items, metaByFile) {
+  function renderGallery(items) {
     const gallery = document.getElementById('gallery');
     if (!items || items.length === 0) {
       gallery.innerHTML = '<div class="empty-msg">등록된 추천도서 목록이 없습니다.</div>';
@@ -298,19 +308,17 @@
     }
     gallery.innerHTML = '';
     items.forEach(item => {
-      const filename = item.src.split('/').pop();
-      const meta = metaByFile ? metaByFile[filename] : null;
       const wrap = document.createElement('div');
       wrap.className = 'gallery-item';
       wrap.innerHTML =
         '<p class="label">' + item.label + '</p>' +
-        buildMetaChips(meta) +
+        buildMetaChips(item.meta) +
         '<img src="' + item.src + '" alt="' + item.label + '" loading="lazy">';
       gallery.appendChild(wrap);
     });
   }
 
-  function loadGallery(metaByFile) {
+  function loadGallery() {
     fetch(REPO_API)
       .then(res => {
         if (!res.ok) throw new Error('folder listing failed');
@@ -320,39 +328,18 @@
         const images = files
           .filter(f => f.type === 'file' && IMAGE_EXT.test(f.name))
           .sort((a, b) => b.name.localeCompare(a.name, 'en', { numeric: true }))
-          .map(f => ({ src: 'images/' + f.name, label: prettifyLabel(f.name) }));
-        renderGallery(images.length ? images : FALLBACK_IMAGES, metaByFile);
+          .map(f => {
+            const parsed = parseFilenameMeta(f.name);
+            return { src: 'images/' + f.name, label: parsed.label, meta: parsed.meta };
+          });
+        renderGallery(images.length ? images : FALLBACK_IMAGES);
       })
       .catch(() => {
-        renderGallery(FALLBACK_IMAGES, metaByFile);
+        renderGallery(FALLBACK_IMAGES);
       });
   }
 
-  if (META_CSV_URL) {
-    Papa.parse(META_CSV_URL, {
-      download: true,
-      header: true,
-      transformHeader: function(h) { return h.trim(); },
-      complete: function(results) {
-        const metaByFile = {};
-        (results.data || []).forEach(row => {
-          const filename = (row['파일명'] || row['filename'] || '').trim();
-          if (!filename) return;
-          metaByFile[filename] = {
-            '진행시기': (row['진행시기'] || row['period'] || '').trim(),
-            '참여팀': (row['참여팀'] || row['team'] || '').trim(),
-            '참여학생수': (row['참여학생수'] || row['students'] || '').trim()
-          };
-        });
-        loadGallery(metaByFile);
-      },
-      error: function() {
-        loadGallery(null);
-      }
-    });
-  } else {
-    loadGallery(null);
-  }
+  loadGallery();
 
   // ---- 공지사항 탭 ----
   const noticeContainer = document.getElementById('notice-container');
